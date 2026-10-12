@@ -25,3 +25,10 @@ if ! command -v exiftool >/dev/null 2>&1 && command -v apt-get >/dev/null 2>&1; 
     || { apt-get update -qq && apt-get install -y -qq libimage-exiftool-perl; }; } >/dev/null 2>&1 \
     || echo "geoint: could not install exiftool; continuing without it" >&2
 fi
+
+# Headless Chromium for reverse image search (revimg.py); the scripts use the latest Playwright,
+# which may want a newer build than the one preinstalled. Skipped quickly when already present.
+if command -v uvx >/dev/null 2>&1; then
+  timeout 300 uvx playwright install chromium-headless-shell >/dev/null 2>&1 \
+    || echo "geoint: could not install Playwright Chromium; reverse image search needs it" >&2
+fi
