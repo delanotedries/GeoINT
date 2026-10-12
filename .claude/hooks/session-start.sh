@@ -13,6 +13,12 @@ mkdir -p "$HOME/.agents/skills" "$HOME/.claude/skills"
 ln -sfn "$repo" "$HOME/.agents/skills/geoint"
 ln -sfn "$HOME/.agents/skills/geoint" "$HOME/.claude/skills/geoint"
 
+# The scripts ignore ambient proxies unless GEO_PROXY is set; cloud sessions only reach the web through one.
+proxy="${HTTPS_PROXY:-${https_proxy:-}}"
+if [ -n "$proxy" ] && [ -n "${CLAUDE_ENV_FILE:-}" ]; then
+  echo "export GEO_PROXY=\"$proxy\"" >> "$CLAUDE_ENV_FILE"
+fi
+
 # exiftool is optional (meta.py reads more with it); don't fail the session if apt is unreachable.
 if ! command -v exiftool >/dev/null 2>&1 && command -v apt-get >/dev/null 2>&1; then
   { apt-get install -y -qq libimage-exiftool-perl \
